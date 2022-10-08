@@ -52,63 +52,33 @@ def player_places_piece!(brd)
   brd[square] = PLAYER_MARKER
 end
 
-## The solution below was my first stab at solving Problem 3. Computer AI: Defense
-# def computer_places_piece!(brd)
-#   square = nil
-#   WINNING_LINES.each do |line|
-#     if (brd[line[0]] == PLAYER_MARKER && brd[line[1]] == PLAYER_MARKER && brd[line[2]] == INITAL_MARKER)
-#       square = line[2]
-#       break
-#     elsif
-#       (brd[line[2]] == PLAYER_MARKER && brd[line[1]] == PLAYER_MARKER && brd[line[0]] == INITAL_MARKER)
-#       square = line[0]
-#       break
-#     else
-#       square = empty_squares(brd).sample
-#     end
-#   end
-#   brd[square] = COMPUTER_MARKER
-# end
-
-# Function from 'possible solution' in assignment
 def computer_places_piece!(brd)
   square = nil
 
   # Offense
-  if !square
-    WINNING_LINES.each do |line|
-      square = find_at_risk_square(line, brd, COMPUTER_MARKER)
-      break if square
-    end
-  end
-
-  # Defense
   WINNING_LINES.each do |line|
-    square = find_at_risk_square(line, brd, PLAYER_MARKER)
+    square = find_at_risk_square(line, brd, COMPUTER_MARKER)
     break if square
   end
 
+  # Defense
   if !square
-    if brd[5] == INITAL_MARKER
-      square = 5
+    WINNING_LINES.each do |line|
+    square = find_at_risk_square(line, brd, PLAYER_MARKER)
+    break if square
     end
   end
 
-  #Random
+  # Picks center square if there are not 2 in a row of any marker
+  if brd[5] == INITAL_MARKER
+    square = 5
+  end
+
   if !square
     square = empty_squares(brd).sample
   end
 
   brd[square] = COMPUTER_MARKER
-end
-
-# Function from 'possible solution' in assignment
-def find_at_risk_square(line, board, marker)
-  if board.values_at(*line).count(marker) == 2
-    board.select {|key, value| line.include?(key) && value == INITAL_MARKER}.keys.first
-  else
-    nil
-  end
 end
 
 def board_full?(brd)
@@ -121,16 +91,6 @@ end
 
 def detect_winner(brd)
   WINNING_LINES.each do |line|
-    # if brd[line[0]] == PLAYER_MARKER &&
-    #    brd[line[1]] == PLAYER_MARKER &&
-    #    brd[line[2]] == PLAYER_MARKER
-    #   return 'Player'
-    # elsif brd[line[0]] == COMPUTER_MARKER &&
-    #       brd[line[1]] == COMPUTER_MARKER &&
-    #       brd[line[2]] == COMPUTER_MARKER
-    #   return 'Computer'
-    # end
-
     if brd.values_at(*line).count(PLAYER_MARKER) == 3
       return 'Player'
     elsif brd.values_at(*line).count(COMPUTER_MARKER) == 3
@@ -141,49 +101,49 @@ def detect_winner(brd)
 end
 
 def joinor(brd, punct=", ", combiner="or ")
-  empty_squares(brd).join("#{punct}").insert(-2, "#{combiner}")
+  if empty_squares(brd).count == 1
+    empty_squares(brd).join
+  else
+    empty_squares(brd).join("#{punct}").insert(-2, "#{combiner}")
+  end
 end
 
-# def place_piece!(brd, player)
-#   if player == 'Player'
-#     player_places_piece!(brd)
-#   elsif player = 'Computer'
-#     computer_places_piece(brd)
-#   end  
-# end
+def find_at_risk_square(line, board, marker)
+  if board.values_at(*line).count(marker) == 2
+    board.select{|k,v| line.include?(k) && v == INITAL_MARKER}.keys.first
+  else
+    nil
+  end
+end
 
-# def alternate_player(curr_player)
-#   if curr_player == ' '
-#     'Player'
-#   elsif curr_player == 'Player'
-#     'Computer'
-#   elsif curr_player == 'Computer'
-#     'Player'
-#   end
-# end
+def place_piece!(brd, current_player)
+  if current_player == 'p'
+    player_places_piece!(brd)
+  elsif current_player == 'c'
+    computer_places_piece!(brd)
+  end
+end
+
+def alternate_player(current_player)
+  current_player == 'p' ? 'c' : 'p'
+end
 
 player_wins = 0
 computer_wins = 0
 
-## This allows the player to choose who goes first
-prompt "Who should go first? Please enter P for Player or C for Computer: "
-goes_first = gets.chomp.downcase
-
-## This code allows the computer to choose who goes first:
-# goes_first = [1, 2].sample
+# prompt "Who should move first? Enter 'C' for computer or 'P' for player"
+# answer = gets.chomp.downcase
 
 loop do
+  current_player = ['p','c'].sample 
   board = initialize_board
-
+  
   loop do
     display_board(board)
-  
-    player_places_piece!(board)
+    place_piece!(board, current_player)
+    current_player = alternate_player(current_player)
     break if someone_won?(board) || board_full?(board)
-  
-    computer_places_piece!(board)
-    break if someone_won?(board) || board_full?(board)
-  end 
+  end
 
   display_board(board)
 
