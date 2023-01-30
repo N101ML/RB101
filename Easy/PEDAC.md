@@ -1,14 +1,25 @@
-## Problem
-- 
+PEDAC Template
+==============
+### Process The Problem
+- Understanding the Problem
+  - Identify expected Input and Output:
+  - Make the requirements explicit
+  - Identify Rules
+  - Mental Model
+- Examples/Test Cases
+- Data Structure
+- Algorithm
 
-## Examples / Test Cases
+### Input: 
+### Output: 
+
+### Requirements/Rules: 
+### Model:
 
 
-## Data Structures
+### Examples / Test Cases: 
 
-- 
 
-## Algorithm
+### Data Structure
 
-- 
- 
+### Algorithm
