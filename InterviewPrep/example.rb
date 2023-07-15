@@ -1,37 +1,31 @@
 =begin
-# input: arr of integers
+# input: str
 # output: integer
 # rules:
-  # find the index where the sum to the left is the same as the sum to the right
-  # if none exists, return -1
+  # find the substring of str that is a palindrome and has the longest length
+  # if length of str is 0, return 0
 # examples:
   #
 # data structure:
-  # array / loop
+  # array
 # algorithm:
-  # loop
-    # ls is equal to 0 with length of length
-    # rs is equal to 0 + 1 to length of last element (-1)
+  # find all substrings of str
 =end
 
-require 'pry'
+def longest_palindrome(str)
+  result_arr = []
 
-def find_even_index(arr)
-  length = 0
-  loop do
-    left_side = arr[0, length]
-    right_side = arr[(length + 1)..-1]
-    return length if left_side.sum == right_side.sum
-    length += 1
-    break if length >= arr.size
+  0.upto(str.size - 1) do |first|
+    first.upto(str.size - 1) do |second|
+      result_arr << str[first..second].size if str[first..second] == str[first..second].chars.reverse.join
+    end
   end
-  -1
+  p result_arr.max
 end
 
-p find_even_index([1, 2, 3, 4, 3, 2, 1]) == 3
-p find_even_index([1, 100, 50, -51, 1, 1]) == 1
-p find_even_index([1, 2, 3, 4, 5, 6]) == -1
-p find_even_index([20, 10, 30, 10, 10, 15, 35]) == 3
-p find_even_index([20, 10, -80, 10, 10, 15, 35]) == 0
-p find_even_index([10, -80, 10, 10, 15, 35, 20]) == 6
-p find_even_index([-1, -2, -3, -4, -3, -2, -1]) == 3
+p longest_palindrome('a') == 1
+p longest_palindrome('aa') == 2
+p longest_palindrome('baa') == 2
+p longest_palindrome('aab') == 2
+p longest_palindrome('baabcd') == 4
+p longest_palindrome('baablkj12345432133d') == 9
